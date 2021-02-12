@@ -52,7 +52,9 @@ class TableHead(TableMetricProvider):
         table_name = getattr(selectable, "name", None)
         if table_name is not None:
             try:
-                if metric_value_kwargs["fetch_all"]:
+                if metric_value_kwargs.get(
+                    "fetch_all", cls.default_kwarg_values["fetch_all"]
+                ):
                     df = pd.read_sql_table(
                         table_name=getattr(selectable, "name", None),
                         schema=getattr(selectable, "schema", None),
@@ -81,10 +83,16 @@ class TableHead(TableMetricProvider):
         if df is None:
             # we want to compile our selectable
             stmt = sa.select(["*"]).select_from(selectable)
-            if metric_value_kwargs["fetch_all"]:
+            if metric_value_kwargs.get(
+                "fetch_all", cls.default_kwarg_values["fetch_all"]
+            ):
                 pass
             else:
-                stmt = stmt.limit(metric_value_kwargs["n_rows"])
+                stmt = stmt.limit(
+                    metric_value_kwargs.get(
+                        "n_rows", cls.default_kwarg_values["n_rows"]
+                    )
+                )
             sql = stmt.compile(
                 dialect=execution_engine.engine.dialect,
                 compile_kwargs={"literal_binds": True},
