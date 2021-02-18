@@ -6,12 +6,12 @@ import uuid
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
 
 from great_expectations.core.batch import BatchMarkers
-from great_expectations.core.id_dict import IDDict
-from great_expectations.datasource.types.batch_spec import (
+from great_expectations.core.batch_spec import (
     BatchSpec,
     PathBatchSpec,
     RuntimeDataBatchSpec,
 )
+from great_expectations.core.id_dict import IDDict
 from great_expectations.exceptions import exceptions as ge_exceptions
 
 from ..exceptions import (
@@ -23,7 +23,7 @@ from ..exceptions import (
 )
 from ..expectations.row_conditions import parse_condition_to_spark
 from ..validator.validation_graph import MetricConfiguration
-from .execution_engine import BatchData, ExecutionEngine, MetricDomainTypes
+from .execution_engine import ExecutionEngine, MetricDomainTypes
 from .sparkdf_batch_data import SparkDFBatchData
 
 logger = logging.getLogger(__name__)

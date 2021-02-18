@@ -11,6 +11,7 @@ from great_expectations.core.batch import (
 from great_expectations.core.id_dict import BatchSpec
 from great_expectations.execution_engine import ExecutionEngine
 from great_expectations.validator.validation_graph import MetricConfiguration
+from great_expectations.validator.validator import Validator
 
 logger = logging.getLogger(__name__)
 
@@ -330,16 +331,39 @@ class DataConnector:
         )
 
         # Note: get_batch_data_and_metadata will have loaded the data into the currently-defined execution engine.
-        df = self._execution_engine.resolve_metrics(
-            (
-                MetricConfiguration(
-                    "table.head", {"batch_id": batch_definition.id}, {"n_rows": 5}
-                ),
+        validator = Validator(self._execution_engine)
+        df = validator.get_metric(
+            MetricConfiguration(
+                "table.head", {"batch_id": batch_definition.id}, {"n_rows": 5}
             )
         )
-        n_rows = self._execution_engine.resolve_metrics(
-            (MetricConfiguration("table.row_count", {"batch_id": batch_definition.id}),)
+        n_rows = validator.get_metric(
+            MetricConfiguration("table.row_count", {"batch_id": batch_definition.id})
         )
+        # # TODO: update to validator get_metrics to have validator automatically handle
+        # # metric dependency resolution
+        # df = self._execution_engine.resolve_metrics(
+        #     (
+        #         MetricConfiguration(
+        #             "table.head", {"batch_id": batch_definition.id}, {"n_rows": 5}
+        #         ),
+        #     )
+        # )
+        # desired_metric = MetricConfiguration(
+        #     metric_name="table.row_count.aggregate_fn",
+        #     metric_domain_kwargs=dict(),
+        #     metric_value_kwargs=dict(),
+        # )
+        # _ = self._execution_engine.resolve_metrics(metrics_to_resolve=(desired_metric,))
+        # row_count = MetricConfiguration(
+        #     metric_name="table.row_count",
+        #     metric_domain_kwargs={},
+        #     metric_value_kwargs=dict(),
+        #     metric_dependencies={"metric_partial_fn": desired_metric},
+        # )
+        # n_rows = self._execution_engine.resolve_metrics(
+        #     (row_count,), metrics=_
+        # )
 
         if pretty_print and df is not None:
             print(f"\n\t\tShowing 5 rows")

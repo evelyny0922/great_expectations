@@ -3830,7 +3830,7 @@ class_name: SimpleSqlalchemyDatasource
 connection_string: sqlite:///{db_file}
 """
         + """
-inferred_assets:
+introspection:
     whole_table: {}
 
     daily:

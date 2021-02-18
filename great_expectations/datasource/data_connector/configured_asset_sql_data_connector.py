@@ -3,14 +3,12 @@ from typing import Dict, List, Optional
 from great_expectations.core.batch import (
     BatchDefinition,
     BatchRequest,
-    BatchSpec,
     PartitionDefinition,
 )
 from great_expectations.datasource.data_connector.data_connector import DataConnector
 from great_expectations.datasource.data_connector.util import (
     batch_definition_matches_batch_request,
 )
-from great_expectations.datasource.types import SqlAlchemyDatasourceBatchSpec
 from great_expectations.execution_engine import ExecutionEngine
 
 try:

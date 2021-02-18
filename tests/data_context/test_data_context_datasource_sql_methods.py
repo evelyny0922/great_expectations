@@ -311,8 +311,9 @@ def test_get_validator_expectation_suite_options(
                 partition_identifiers={"date": "2020-01-15"}
             ),
         ),
-        expectation_suite_name="yet_more_expectations",
-        overwrite_existing_expectation_suite=True,
+        create_expectation_suite_with_name="yet_more_expectations",
+        # TODO: readd
+        # overwrite_existing_expectation_suite=True,
     )
 
     # Failed specification: incorrectly typed expectation suite

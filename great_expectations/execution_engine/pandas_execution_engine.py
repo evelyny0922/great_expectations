@@ -2,6 +2,7 @@ import copy
 import datetime
 import hashlib
 import logging
+import pickle
 import random
 from functools import partial
 from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
@@ -10,14 +11,14 @@ import pandas as pd
 from ruamel.yaml.compat import StringIO
 
 import great_expectations.exceptions.exceptions as ge_exceptions
-from great_expectations.datasource.types.batch_spec import (
+from great_expectations.core.batch_spec import (
     BatchSpec,
     PathBatchSpec,
     RuntimeDataBatchSpec,
     S3BatchSpec,
 )
-from great_expectations.datasource.util import S3Url
 
+from ..core.util import S3Url
 from .pandas_batch_data import PandasBatchData
 
 try:
@@ -27,9 +28,8 @@ except ImportError:
 
 from great_expectations.core.batch import BatchMarkers
 
-from ..datasource.util import hash_pandas_dataframe
 from ..exceptions import BatchSpecError, GreatExpectationsError, ValidationError
-from .execution_engine import BatchData, ExecutionEngine, MetricDomainTypes
+from .execution_engine import ExecutionEngine, MetricDomainTypes
 
 logger = logging.getLogger(__name__)
 
@@ -591,3 +591,13 @@ Notes:
             == hash_value
         )
         return df[matches]
+
+
+def hash_pandas_dataframe(df):
+    try:
+        obj = pd.util.hash_pandas_object(df, index=True).values
+    except TypeError:
+        # In case of facing unhashable objects (like dict), use pickle
+        obj = pickle.dumps(df, pickle.HIGHEST_PROTOCOL)
+
+    return hashlib.md5(obj).hexdigest()

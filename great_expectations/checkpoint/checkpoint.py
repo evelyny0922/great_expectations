@@ -260,7 +260,7 @@ class Checkpoint:
                 )
                 action_list: list = substituted_validation_dict.get("action_list")
 
-                validator: Validator = self.data_context.get_validator(
+                validator = self.data_context.get_validator(
                     batch_request=batch_request,
                     expectation_suite_name=expectation_suite_name,
                 )
